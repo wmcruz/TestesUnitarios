@@ -1,4 +1,4 @@
-package br.ce.waquino.servicos;
+package br.ce.wcaquino.servicos;
 
 
 import br.ce.wcaquino.entidades.Filme;
@@ -6,8 +6,10 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
-import br.ce.wcaquino.servicos.LocacaoService;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
