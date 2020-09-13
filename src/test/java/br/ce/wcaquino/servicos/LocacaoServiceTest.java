@@ -6,6 +6,7 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
+import br.ce.wcaquino.utils.DataUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,6 +15,7 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -119,5 +121,19 @@ public class LocacaoServiceTest {
 
         // teste
         assertThat(locacao.getValor(), is(14.0));
+    }
+
+    @Test
+    public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException {
+        // cenario
+        Usuario usuario = new Usuario("Usuário 1");
+        List<Filme> filmes = Arrays.asList(new Filme("Filme 1", 1, 5.0));
+
+        // acao
+        Locacao retorno = service.alugarFilme(usuario, filmes);
+
+        // verificacao
+        boolean ehSegunda = DataUtils.verificarDiaSemana(retorno.getDataRetorno(), Calendar.MONDAY);
+        Assert.assertTrue(ehSegunda);
     }
 }
