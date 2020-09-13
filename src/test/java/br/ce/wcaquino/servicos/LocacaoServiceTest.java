@@ -50,8 +50,10 @@ public class LocacaoServiceTest {
         // verificacao
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
         error.checkThat(locacao.getValor(), is(not(6.0)));
+        error.checkThat(locacao.getDataLocacao(), MatchersProprios.ehHoje());
         error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
         error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+        error.checkThat(locacao.getDataRetorno(), MatchersProprios.ehHojeComDiferencaDias(1));
     }
 
     @Test(expected = FilmeSemEstoqueException.class) // formaElegante
@@ -102,7 +104,7 @@ public class LocacaoServiceTest {
         Locacao retorno = service.alugarFilme(usuario, filmes);
 
         // verificacao
-        assertThat(retorno.getDataRetorno(), MatchersProprios.caiEm(Calendar.SUNDAY));
+        assertThat(retorno.getDataRetorno(), MatchersProprios.caiEm(Calendar.MONDAY));
         assertThat(retorno.getDataRetorno(), MatchersProprios.caiNumaSegunda());
     }
 }
