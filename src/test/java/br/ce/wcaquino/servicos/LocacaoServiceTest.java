@@ -1,7 +1,6 @@
 package br.ce.wcaquino.servicos;
 
 
-import br.ce.wcaquino.builders.LocacaoBuilder;
 import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -21,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
+import static br.ce.wcaquino.builders.LocacaoBuilder.umLocacao;
 import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
@@ -145,17 +145,24 @@ public class LocacaoServiceTest {
     public void deveEnviarEmailParaLocacoesAtrasadas() {
         // cenario
         Usuario usuario = umUsuario().agora();
+        Usuario usuario2 = umUsuario().comNome("Usuario em dia").agora();
+        Usuario usuario3 = umUsuario().comNome("Outro usuário atrasado").agora();
+
         List<Locacao> locacoes = Arrays.asList(
-                LocacaoBuilder.umLocacao()
-                            .comUsuario(usuario)
-                            .comDataRetorno(DataUtils.obterDataComDiferencaDias(-2))
-                        .agora());
+                umLocacao().atrasado().comUsuario(usuario).agora(),
+                umLocacao().comUsuario(usuario2).agora(),
+                umLocacao().atrasado().comUsuario(usuario3).agora(),
+                umLocacao().atrasado().comUsuario(usuario3).agora());
         Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 
         // acao
         service.notificarAtrasos();
 
         // verificacao
+        Mockito.verify(emailService, Mockito.times(3)).notificarAtraso(Mockito.<Usuario>any(Usuario.class));
         Mockito.verify(emailService).notificarAtraso(usuario);
+        Mockito.verify(emailService, Mockito.atLeastOnce()).notificarAtraso(usuario3);
+        Mockito.verify(emailService, Mockito.never()).notificarAtraso(usuario2);
+        Mockito.verifyNoMoreInteractions(emailService);
     }
 }
