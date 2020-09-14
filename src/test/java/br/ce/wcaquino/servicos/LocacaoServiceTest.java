@@ -1,6 +1,7 @@
 package br.ce.wcaquino.servicos;
 
 
+import br.ce.wcaquino.builders.LocacaoBuilder;
 import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -34,6 +35,8 @@ public class LocacaoServiceTest {
 
     private SPCService spcService;
 
+    private EmailService emailService;
+
     @Rule
     public ErrorCollector error = new ErrorCollector();
 
@@ -45,9 +48,11 @@ public class LocacaoServiceTest {
         this.service = new LocacaoService();
         this.dao = Mockito.mock(LocacaoDAO.class);
         this.spcService = Mockito.mock(SPCService.class);
+        this.emailService = Mockito.mock(EmailService.class);
 
         service.setLocacaoDAO(dao);
         service.setSpcService(spcService);
+        service.setEmailService(emailService);
     }
 
     @Test
@@ -134,5 +139,23 @@ public class LocacaoServiceTest {
 
         // acao
         service.alugarFilme(usuario, filmes);
+    }
+
+    @Test
+    public void deveEnviarEmailParaLocacoesAtrasadas() {
+        // cenario
+        Usuario usuario = umUsuario().agora();
+        List<Locacao> locacoes = Arrays.asList(
+                LocacaoBuilder.umLocacao()
+                            .comUsuario(usuario)
+                            .comDataRetorno(DataUtils.obterDataComDiferencaDias(-2))
+                        .agora());
+        Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
+
+        // acao
+        service.notificarAtrasos();
+
+        // verificacao
+        Mockito.verify(emailService).notificarAtraso(usuario);
     }
 }
