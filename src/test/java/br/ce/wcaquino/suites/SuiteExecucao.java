@@ -1,5 +1,6 @@
 package br.ce.wcaquino.suites;
 
+import br.ce.wcaquino.servicos.CalculadoraMockTest;
 import br.ce.wcaquino.servicos.CalculadoraTest;
 import br.ce.wcaquino.servicos.CalculoValorLocacaoTest;
 import br.ce.wcaquino.servicos.LocacaoServiceTest;
@@ -10,7 +11,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         CalculadoraTest.class,
         CalculoValorLocacaoTest.class,
-        LocacaoServiceTest.class
+        LocacaoServiceTest.class,
+        CalculadoraMockTest.class
 })
 public class SuiteExecucao {
     // Criação de classe Suite, serve para centralizar os testes, ordens a serem executadas
