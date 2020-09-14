@@ -12,7 +12,10 @@ import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -28,13 +31,13 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 public class LocacaoServiceTest {
-
+    @InjectMocks
     private LocacaoService service;
-
+    @Mock
     private LocacaoDAO dao;
-
+    @Mock
     private SPCService spcService;
-
+    @Mock
     private EmailService emailService;
 
     @Rule
@@ -45,14 +48,7 @@ public class LocacaoServiceTest {
 
     @Before
     public void setup() {
-        this.service = new LocacaoService();
-        this.dao = Mockito.mock(LocacaoDAO.class);
-        this.spcService = Mockito.mock(SPCService.class);
-        this.emailService = Mockito.mock(EmailService.class);
-
-        service.setLocacaoDAO(dao);
-        service.setSpcService(spcService);
-        service.setEmailService(emailService);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
