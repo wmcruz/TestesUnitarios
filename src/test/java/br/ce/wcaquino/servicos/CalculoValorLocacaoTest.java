@@ -1,6 +1,6 @@
 package br.ce.wcaquino.servicos;
 
-import br.ce.wcaquino.builders.FilmeBuilder;
+import br.ce.wcaquino.daos.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
@@ -11,12 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static br.ce.wcaquino.builders.FilmeBuilder.*;
+import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
 import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(Parameterized.class)
@@ -34,6 +35,8 @@ public class CalculoValorLocacaoTest {
     @Before
     public void setup() {
         this.service = new LocacaoService();
+        LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
+        service.setLocacaoDAO(dao);
     }
 
     private static Filme filme1 = umFilme().agora();
