@@ -12,10 +12,7 @@ import br.ce.wcaquino.utils.DataUtils;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,6 +22,8 @@ import java.util.List;
 import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
 import static br.ce.wcaquino.builders.LocacaoBuilder.umLocacao;
 import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
+import static br.ce.wcaquino.matchers.MatchersProprios.ehHoje;
+import static br.ce.wcaquino.matchers.MatchersProprios.ehHojeComDiferencaDias;
 import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.*;
@@ -64,10 +63,10 @@ public class LocacaoServiceTest {
         // verificacao
         error.checkThat(locacao.getValor(), is(equalTo(5.0)));
         error.checkThat(locacao.getValor(), is(not(6.0)));
-        error.checkThat(locacao.getDataLocacao(), MatchersProprios.ehHoje());
+        error.checkThat(locacao.getDataLocacao(), ehHoje());
         error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
         error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
-        error.checkThat(locacao.getDataRetorno(), MatchersProprios.ehHojeComDiferencaDias(1));
+        error.checkThat(locacao.getDataRetorno(), ehHojeComDiferencaDias(1));
     }
 
     @Test(expected = FilmeSemEstoqueException.class) // formaElegante
@@ -176,5 +175,23 @@ public class LocacaoServiceTest {
 
         // acao
         service.alugarFilme(usuario, filmes);
+    }
+
+    // @Test
+    public void deveProrrogarUmaLocacao() {
+        // cenario
+        Locacao locacao = umLocacao().agora();
+
+        // acao
+        service.prorrogarLocacao(locacao, 3);
+
+        // verificacao
+        ArgumentCaptor<Locacao> argumentCaptor = ArgumentCaptor.forClass(Locacao.class);
+        Mockito.verify(dao).salvar(argumentCaptor.capture());
+        Locacao locacaoRetornada = argumentCaptor.getValue();
+
+        error.checkThat(locacaoRetornada.getValor(), is(12.0));
+        error.checkThat(locacaoRetornada.getDataLocacao(), ehHoje());
+        error.checkThat(locacaoRetornada.getDataRetorno(), ehHojeComDiferencaDias(3));
     }
 }
